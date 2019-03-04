@@ -643,7 +643,7 @@ portfolio_weights = (
 
 ```python
 portfolio_returns = np.dot(
-    matrix(portfolio_weights[['default_weights']].as_matrix(), (1,57)),
+    matrix(portfolio_weights[['weightage']].as_matrix(), (1,57)),
     matrix(golden_cluster_stocks[['avg_yearly_returns']].as_matrix(), (57,1))
 )
 ```
@@ -657,11 +657,11 @@ portfolio_returns = np.dot(
 
 ```python
 temp_value = np.dot(
-        matrix(portfolio_weights[['default_weights']].as_matrix(), (1,57)),
+        matrix(portfolio_weights[['weightage']].as_matrix(), (1,57)),
         golden_cluster_covariance_matrix
 )
 
-portfolio_stdev = np.sqrt(np.dot(temp_value,matrix(portfolio_weights[['default_weights']].as_matrix(), (57,1))))
+portfolio_stdev = np.sqrt(np.dot(temp_value,matrix(portfolio_weights[['weightage']].as_matrix(), (57,1))))
 
 portfolio_sharpe_ratio = portfolio_returns/portfolio_stdev
 ```
@@ -679,9 +679,9 @@ print("portfolio standard deviation: " + str(round(float((portfolio_stdev)),4)))
 print("portfolio sharpe ratio: " + str(round(float((portfolio_sharpe_ratio)),4))) 
 ```
 
-    portfolio returns: 0.2397
-    portfolio standard deviation: 0.0916
-    portfolio sharpe ratio: 2.6155
+    portfolio returns: 0.275
+    portfolio standard deviation: 0.0216
+    portfolio sharpe ratio: 12.7293
 
 
 

@@ -231,7 +231,7 @@ portfolio_weights = (
 
 
 portfolio_returns = np.dot(
-    matrix(portfolio_weights[['default_weights']].as_matrix(), (1,57)),
+    matrix(portfolio_weights[['weightage']].as_matrix(), (1,57)),
     matrix(golden_cluster_stocks[['avg_yearly_returns']].as_matrix(), (57,1))
 )
 
@@ -239,11 +239,11 @@ portfolio_returns = np.dot(
 
 
 temp_value = np.dot(
-        matrix(portfolio_weights[['default_weights']].as_matrix(), (1,57)),
+        matrix(portfolio_weights[['weightage']].as_matrix(), (1,57)),
         golden_cluster_covariance_matrix
 )
 
-portfolio_stdev = np.sqrt(np.dot(temp_value,matrix(portfolio_weights[['default_weights']].as_matrix(), (57,1))))
+portfolio_stdev = np.sqrt(np.dot(temp_value,matrix(portfolio_weights[['weightage']].as_matrix(), (57,1))))
 
 portfolio_sharpe_ratio = portfolio_returns/portfolio_stdev
 
