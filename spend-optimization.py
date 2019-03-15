@@ -142,12 +142,16 @@ golden_cluster_correlation_df.head()
 #     1. we assume no short position, so weightage of one stock >= 0 and <= 1
 #     
 #     
-# - Now if we have to place the objective function, it will be the portfolio variance:
-#     - $ w^T * Cov_{matrix} * w$
+# - Now if we have to place the objective function, it will be the portfolio standard deviation:
+#     - $ \sigma_p = \sqrt{\sum_{i}\sum_{j}w_{i}w_{j}\sigma_{ij}} $ = $ w^T * Cov_{matrix} * w$
 # - subjected to the following constraints:
-#     - portfolio returns = $ \sum (w_i *\mu_i) $ = R
+#     - portfolio returns = $ \sum (w_i *\mu_i) $ = x
 #     - sum of weights = $\sum w_i$ = 1
 #     - weight of each stock = $ 0 \leq w_i \leq 1$
+#         - $\mu_i$: expected return of stock
+#         - $w_i$: allocation weight of stock
+#         - $x$: target of expected return
+#         - $\sigma_{ij}$: covariance of stock returns between 2 stocks
 # 
 # 
 # - if we think a little more about the covariance formula, $ \frac{1}{n} \sum((x_i - \mu_x)(y_i - \mu_y))$
@@ -204,7 +208,7 @@ def optimize_portfolio(n, avg_ret, covs, r_min):
 
 
 
-solution = optimize_portfolio(57, golden_cluster_return_matrix, golden_cluster_covariance_matrix, 0.275)
+solution = optimize_portfolio(57, golden_cluster_return_matrix, golden_cluster_covariance_matrix, 0.290)
 
 
 # ### Dataframe of portfolio weights
@@ -227,6 +231,11 @@ portfolio_weights = (
 # ### Portfolio returns, standard deviation and sharpe ratio
 # - sharpe ratio is a measure of risk-to-reward ratio, $sharpeRatio = \frac{portfolioReturns}{portfolioStdDev}$
 #     - a higher magnitude the better it is
+
+
+
+portfolio_weights.dtypes
+
 
 
 
@@ -342,17 +351,18 @@ aggregate_efficient_frontier = (
     aggregate_efficient_frontier.append(efficient_frontier(0))
     .sort_values(['portfolio_return'])
     .pipe(lambda x:x.assign(reject_portfolio_allocation = np.where(x.portfolio_sharpe_ratio < 2.61547,1,0)))
-    .query("portfolio_return < 0.24 | portfolio_return >= 0.26")
+    .query("portfolio_return < 0.24 | portfolio_return >= 0.275")
 )
 
 
 
 
 plt.figure(figsize=(20,10))
+plt.rcParams.update({'font.size': 18})
 
 plt.plot(aggregate_efficient_frontier.portfolio_stdev,aggregate_efficient_frontier.portfolio_return)
 
-plt.legend(loc='upper left', frameon=False)
+
 plt.xlabel("portfolio_risk")
 plt.ylabel("portfolio_returns")
 plt.title("efficient frontier curve")
@@ -361,8 +371,15 @@ plt.title("efficient frontier curve")
 plt.xticks([])
 plt.axvline(x=9.163231e-02, linestyle='-.', color='red',label='testing')
 plt.text(9.23238e-02, 0.30,'threshold of returns',color='red')
+plt.legend(loc='upper left', frameon=False)
+
 
 plt.show()
+
+
+
+
+aggregate_efficient_frontier.query("portfolio_return >= 0.269 & portfolio_return <= 0.291")
 
 
 # ### We reject any returns beyond the red vertical --> the risk to reward ratio is not worth it for the amount of additional returns
@@ -380,9 +397,9 @@ portfolio_weights_sort_weight.query("weightage > 0.00001").head(15)
 
 
 (
-    golden_cluster_correlation_df[['CHE','USPH','MLAB','KWR','UNH','LII','MOH']]
+    golden_cluster_correlation_df[['CHE','ICUI','KWR','LII','MLAB','MOH','USPH']]
     .reset_index()
-    .query("index in ('CHE','USPH','MLAB','KWR','UNH','LII','MOH')")
+    .query("index in ('CHE','ICUI','KWR','LII','MLAB','MOH','USPH')")
     .rename(columns={"index":"ticker"})
 )
 
